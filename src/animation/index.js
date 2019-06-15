@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import styled from "styled-components";
 
 import Grid from "./Grid";
+import {HandleChange} from "./hooks";
 
 const Panel = styled.div`
   position: fixed;
@@ -36,6 +37,32 @@ const ButtonContainer = styled.div`
 
 const AnimationCreator = () => {
   const [counter, setCounter] = useState(0);
+  const [speed, handleSpeedInput] = HandleChange(100);
+
+  function _convertToAxis(index) {
+    return {x: index % 8, y: Math.floor(index / 8)};
+  }
+
+  async function _handleSubmit() {
+    const keyframes = [];
+
+    for (let i = 0; i < counter; ++i) {
+      keyframes[i] = JSON.parse(localStorage.getItem(i)).map(_convertToAxis);
+    }
+
+    const body = JSON.stringify({speed, keyframes});
+
+    const response = await fetch("http://10.10.1.172:3000/", {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body,
+    });
+
+    console.log(response, body);
+  }
 
   return (
     <>
@@ -44,11 +71,11 @@ const AnimationCreator = () => {
 
         <p>
           Define millisecond per frames<br></br>
-          <input></input>
+          <input onChange={handleSpeedInput} value={speed} />
         </p>
 
         <p>
-          <button>Deploy!</button>
+          <button onClick={_handleSubmit}>Deploy!</button>
         </p>
       </Panel>
 
