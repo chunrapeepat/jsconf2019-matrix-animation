@@ -55,7 +55,7 @@ const AnimationCreator = () => {
       {Array(counter)
         .fill(0)
         .map((_, i) => {
-          return <Grid number={i} />;
+          return <Grid key={i} number={i} />;
         })}
 
       <ButtonContainer>
