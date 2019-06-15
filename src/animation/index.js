@@ -35,8 +35,18 @@ const ButtonContainer = styled.div`
   }
 `;
 
+const defaultCounter = () => {
+  let index = 0;
+
+  while (localStorage.getItem(index)) {
+    index++;
+  }
+
+  return index;
+};
+
 const AnimationCreator = () => {
-  const [counter, setCounter] = useState(0);
+  const [counter, setCounter] = useState(defaultCounter());
   const [speed, handleSpeedInput] = HandleChange(100);
 
   function _convertToAxis(index) {
@@ -52,7 +62,7 @@ const AnimationCreator = () => {
 
     const body = JSON.stringify({speed, keyframes});
 
-    const response = await fetch("http://10.10.1.172:3000/", {
+    const response = await fetch("http://localhost:3000/", {
       method: "POST",
       mode: "cors",
       headers: {
@@ -62,6 +72,11 @@ const AnimationCreator = () => {
     });
 
     console.log(response, body);
+  }
+
+  function _clear() {
+    setCounter(0);
+    localStorage.clear();
   }
 
   return (
@@ -87,9 +102,7 @@ const AnimationCreator = () => {
 
       <ButtonContainer>
         <div onClick={() => setCounter(counter + 1)}>+ Add Keyframe</div>
-        <div onClick={() => setCounter(counter - 1)}>
-          - Remove Lastest Keyframe
-        </div>
+        <div onClick={_clear}>- Remove All Keyframes</div>
       </ButtonContainer>
     </>
   );
