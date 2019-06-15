@@ -1,5 +1,6 @@
 import React, {useState} from "react";
 import styled from "styled-components";
+import {isPlaceholder} from "@babel/types";
 
 const Container = styled.div`
   width: ${84 * 8}px;
@@ -22,6 +23,13 @@ const GridContainer = styled.div`
 
 const Box = styled.div`
   background: ${props => (props.active ? "black" : "white")};
+
+  ${props =>
+    props.placeholder && !props.active
+      ? `
+    background: #ccc!important;
+  `
+      : ""}
 `;
 
 const Grid = ({number}) => {
@@ -47,6 +55,12 @@ const Grid = ({number}) => {
     return state.includes(i);
   };
 
+  const isPlaceholder = i => {
+    let state = JSON.parse(localStorage.getItem(number - 1) || "[]");
+
+    return state.includes(i);
+  };
+
   return (
     <Container>
       <p>Keyframe Number: {number}</p>
@@ -57,6 +71,7 @@ const Grid = ({number}) => {
             return (
               <Box
                 active={isActive(i)}
+                placeholder={isPlaceholder(i)}
                 onClick={() => update(i)}
                 key={`grid_${i}`}
               />
